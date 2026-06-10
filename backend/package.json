@@ -1,0 +1,15 @@
+{
+  "name": "deep-research-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "db:migrate": "prisma migrate dev --name init",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "dev": "python run.py"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.5.0",
+    "prisma": "^6.5.0"
+  }
+}
