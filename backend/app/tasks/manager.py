@@ -8,7 +8,7 @@ from app.agents.router import strategy_router
 from app.agents.strategies.base import get_strategy
 from app.agents.adaptive import AdaptiveDepthController
 from app.db.repositories import task_repo
-from app.services.pdf_service import pdf_service
+from app.services.multimodal_service import multimodal_analysis_service
 
 logger = logging.getLogger(__name__)
 
@@ -54,21 +54,26 @@ async def start_research_task(
             confidence=1.0 if strategy_name else 0.5,
         )
 
-        pdf_context = ""
+        uploaded_context = ""
         if file_id:
             try:
-                raw_text = pdf_service.extract_text(file_id)
-                pdf_context = f"\n\n[上传的文档内容]:\n{raw_text[:4000]}"
-                logger.info(f"[Research {task_id}] Loaded PDF: {len(raw_text)} chars")
+                uploaded_context = await multimodal_analysis_service.build_uploaded_context_async(
+                    file_id,
+                    api_key=api_key,
+                    provider=provider,
+                )
+                logger.info(f"[Research {task_id}] Loaded uploaded context: {len(uploaded_context)} chars")
             except Exception as e:
-                logger.warning(f"[Research {task_id}] PDF load failed: {e}")
+                logger.warning(f"[Research {task_id}] Uploaded media load failed: {e}")
 
         state: dict[str, Any] = {
             "query": query,
             "api_key": api_key,
             "provider": provider,
             "model": model,
-            "pdf_context": pdf_context,
+            "pdf_context": uploaded_context,
+            "uploaded_context": uploaded_context,
+            "media_context": uploaded_context,
             "sub_queries": [],
             "search_results": {},
             "filtered_content": {},

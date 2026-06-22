@@ -20,6 +20,9 @@ Rules:
 
 DRAFT_USER = """Research query: {query}
 
+Uploaded document/media context:
+{uploaded_context}
+
 Synthesized analysis:
 {synthesis}
 

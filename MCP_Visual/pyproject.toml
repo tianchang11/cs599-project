@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "multimodal-mcp"
+version = "0.1.0"
+description = "A multimodal MCP bridge that gives text-only LLM clients image and audio tools."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "mcp[cli]>=1.23",
+    "openai>=2.0",
+    "pydantic>=2.8",
+    "starlette>=0.40,<0.42",
+    "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.24",
+    "respx>=0.21",
+]
+
+[project.scripts]
+multimodal-mcp = "multimodal_mcp.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/multimodal_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

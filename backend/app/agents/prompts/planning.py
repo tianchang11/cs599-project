@@ -19,7 +19,7 @@ Sub-queries:
 
 PLANNING_USER = """Original research query: {query}
 
-Additional context from uploaded document (if any):
+Additional context from uploaded document/media (if any):
 {context}
 
 Please decompose this query into 3-5 focused sub-queries."""

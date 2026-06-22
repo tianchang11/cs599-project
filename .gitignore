@@ -40,6 +40,7 @@ ehthumbs.db
 # Uploads & data
 backend/uploads/
 *.pdf
+!docs/*.pdf
 !backend/prisma/migrations/**/*.sql
 
 # Logs
@@ -84,3 +85,6 @@ tmp/
 temp/
 *.tmp
 *.bak
+
+# Large presentation exports
+*.pptx

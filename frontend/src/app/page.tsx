@@ -38,11 +38,14 @@ export default function HomePage() {
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
-        const uploadRes = await fetch(`${API_BASE_URL}/api/upload/pdf`, {
+        const uploadRes = await fetch(`${API_BASE_URL}/api/upload/media`, {
           method: "POST",
           body: formData,
         });
-        if (!uploadRes.ok) throw new Error("PDF 上传失败");
+        if (!uploadRes.ok) {
+          const errorData = await uploadRes.json().catch(() => null);
+          throw new Error(errorData?.detail || "附件上传失败");
+        }
         const uploadData = await uploadRes.json();
         fileId = uploadData.fileId;
       }
@@ -97,7 +100,7 @@ export default function HomePage() {
             深度研究，从这里开始
           </h1>
           <p className="text-lg text-muted-foreground">
-            输入主题或上传 PDF，让 AI Agent 为你进行全网检索、信息筛选与深度分析
+            输入主题或上传 PDF、图片、音频，让 AI Agent 为你进行全网检索、信息筛选与深度分析
           </p>
         </div>
 
@@ -116,10 +119,10 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-muted-foreground/50 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-primary">
               <Upload className="h-4 w-4" />
-              {file ? file.name : "上传 PDF（可选）"}
+              {file ? file.name : "上传 PDF / 图片 / 音频（可选）"}
               <input
                 type="file"
-                accept=".pdf"
+                accept=".pdf,image/*,audio/*"
                 className="hidden"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
@@ -180,8 +183,8 @@ export default function HomePage() {
         <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
             { title: "智能拆解", desc: "将复杂主题分解为多个子查询" },
+            { title: "多模态理解", desc: "解析 PDF、图片和音频附件上下文" },
             { title: "质量评估", desc: "自动评估搜索质量并迭代优化" },
-            { title: "策略路由", desc: "根据查询类型选择最优研究策略" },
           ].map((f) => (
             <div key={f.title} className="rounded-xl bg-muted/50 p-4 text-center">
               <p className="mb-1 text-sm font-medium">{f.title}</p>

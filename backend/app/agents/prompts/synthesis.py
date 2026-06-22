@@ -11,6 +11,9 @@ Format your synthesis as a structured analysis with clear sections.
 
 SYNTHESIS_USER = """Original query: {query}
 
+Uploaded document/media context (if any):
+{uploaded_context}
+
 Filtered research content across all sub-queries:
 {sub_content}
 

@@ -21,6 +21,7 @@ class DraftNode(BaseNode):
                 {"role": "system", "content": DRAFT_SYSTEM},
                 {"role": "user", "content": DRAFT_USER.format(
                     query=state["query"],
+                    uploaded_context=state.get("uploaded_context") or state.get("media_context") or "",
                     synthesis=state["synthesis_text"],
                     sources=sources_text,
                 )},

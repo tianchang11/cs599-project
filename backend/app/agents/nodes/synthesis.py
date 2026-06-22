@@ -22,7 +22,14 @@ class SynthesisNode(BaseNode):
         synthesis = await chat_completion(
             messages=[
                 {"role": "system", "content": SYNTHESIS_SYSTEM},
-                {"role": "user", "content": SYNTHESIS_USER.format(query=state["query"], sub_content=sub_content)},
+                {
+                    "role": "user",
+                    "content": SYNTHESIS_USER.format(
+                        query=state["query"],
+                        uploaded_context=state.get("uploaded_context") or state.get("media_context") or "",
+                        sub_content=sub_content,
+                    ),
+                },
             ],
             api_key=state["api_key"],
             provider=state["provider"],

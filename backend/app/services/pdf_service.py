@@ -1,8 +1,9 @@
 import logging
 import uuid
 import hashlib
+import mimetypes
 from pathlib import Path
-from typing import TypedDict
+from typing import Literal, TypedDict
 
 import fitz  # PyMuPDF
 
@@ -17,6 +18,30 @@ class PDFChunk(TypedDict):
     page: int
 
 
+MediaType = Literal["pdf", "image", "audio"]
+
+
+SUPPORTED_MEDIA_EXTENSIONS: dict[str, MediaType] = {
+    ".pdf": "pdf",
+    ".png": "image",
+    ".jpg": "image",
+    ".jpeg": "image",
+    ".webp": "image",
+    ".gif": "image",
+    ".bmp": "image",
+    ".tif": "image",
+    ".tiff": "image",
+    ".mp3": "audio",
+    ".wav": "audio",
+    ".m4a": "audio",
+    ".mpeg": "audio",
+    ".mpga": "audio",
+    ".ogg": "audio",
+    ".oga": "audio",
+    ".flac": "audio",
+}
+
+
 class PDFService:
     def __init__(self, upload_dir: Path | None = None):
         self.upload_dir = upload_dir or settings.upload_dir
@@ -29,12 +54,35 @@ class PDFService:
         path.write_bytes(content)
         return file_id
 
+    def save_media_file(self, content: bytes, filename: str) -> tuple[str, MediaType]:
+        ext = Path(filename).suffix.lower()
+        media_type = SUPPORTED_MEDIA_EXTENSIONS.get(ext)
+        if not media_type:
+            raise ValueError("Unsupported media type")
+        file_id = self.save_file(content, filename)
+        return file_id, media_type
+
     def get_path(self, file_id: str) -> Path | None:
-        for ext in [".pdf", ".txt"]:
+        for ext in [".pdf", ".txt", *SUPPORTED_MEDIA_EXTENSIONS.keys()]:
             path = self.upload_dir / f"{file_id}{ext}"
             if path.exists():
                 return path
         return None
+
+    def get_media_type(self, file_id: str) -> MediaType | None:
+        path = self.get_path(file_id)
+        if not path:
+            return None
+        if path.suffix == ".txt":
+            return "pdf"
+        return SUPPORTED_MEDIA_EXTENSIONS.get(path.suffix.lower())
+
+    def get_mime_type(self, file_id: str) -> str | None:
+        path = self.get_path(file_id)
+        if not path:
+            return None
+        guessed, _ = mimetypes.guess_type(path.name)
+        return guessed
 
     def extract_text(self, file_id: str) -> str:
         path = self.get_path(file_id)

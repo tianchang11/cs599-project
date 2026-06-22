@@ -17,7 +17,7 @@ class PlanningNode(BaseNode):
         max_sub_queries = state.get("max_sub_queries", 5)
         logger.info(f"[Planning] Query: {state['query']}, max_sub_queries: {max_sub_queries}")
 
-        context = state.get("pdf_context", "")
+        context = state.get("uploaded_context") or state.get("media_context") or state.get("pdf_context", "")
         user_prompt = PLANNING_USER.format(query=state["query"], context=context)
 
         text = await chat_completion(

@@ -1,0 +1,13 @@
+{
+  "tool": "audio_transcribe",
+  "arguments": {
+    "source": {
+      "type": "path",
+      "value": "D:/media/example-audio.mp3"
+    },
+    "language": "zh",
+    "timestamps": true,
+    "diarize": false
+  }
+}
+

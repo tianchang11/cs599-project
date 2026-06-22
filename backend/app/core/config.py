@@ -55,6 +55,17 @@ class Settings(BaseSettings):
     upload_dir: Path = BASE_DIR / "uploads"
     max_file_size_mb: int = 50
 
+    # MCP_Visual / multimodal media analysis
+    mcp_visual_allowed_dirs_raw: str = Field(default="", validation_alias="MCP_VISUAL_ALLOWED_DIRS")
+    mcp_visual_max_file_mb: int = 25
+    mcp_visual_max_download_mb: int = 25
+    mcp_visual_request_timeout_seconds: float = 60
+    openai_api_key: str = ""
+    openai_vision_model: str = "gpt-5.4-mini"
+    openai_summary_model: str = "gpt-5.4-mini"
+    openai_transcribe_model: str = "gpt-4o-mini-transcribe"
+    openai_diarize_model: str = "gpt-4o-transcribe-diarize"
+
     # Tavily
     tavily_api_key: str = ""
 
@@ -75,6 +86,21 @@ class Settings(BaseSettings):
                 if origin.strip()
             ]
             return origins or ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+    @property
+    def mcp_visual_allowed_dirs(self) -> list[Path]:
+        dirs = [self.upload_dir.resolve()]
+        for value in self.mcp_visual_allowed_dirs_raw.split(","):
+            stripped = value.strip()
+            if stripped:
+                dirs.append(Path(stripped).expanduser().resolve())
+        seen: set[Path] = set()
+        unique_dirs: list[Path] = []
+        for path in dirs:
+            if path not in seen:
+                unique_dirs.append(path)
+                seen.add(path)
+        return unique_dirs
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

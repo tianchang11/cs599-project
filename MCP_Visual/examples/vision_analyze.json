@@ -1,0 +1,12 @@
+{
+  "tool": "vision_analyze",
+  "arguments": {
+    "source": {
+      "type": "path",
+      "value": "D:/media/example-image.jpg"
+    },
+    "prompt": "Describe the scene and list visible text.",
+    "detail": "auto"
+  }
+}
+
